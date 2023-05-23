@@ -9,7 +9,33 @@ exports.getAllTodos = (req, res, next) => {
     }).catch(next)
 }
 
-// ต้องการเฉพาะ title, due_date, status
+exports.summaryTodo = (req, res, next) => {
+    let countAll = Todo.count({
+        where : { userId : req.user.id}
+    })
+    let countDone = Todo.count({
+        where : {
+            status: true,
+            userId: req.user.id
+        }
+    })
+    let countUnDone = Todo.count({
+        where : {
+            status: false,
+            userId: req.user.id
+        }
+    })
+    Promise.all([countAll,countDone,countUnDone])
+    .then( rs=> {
+        // console.log(rs)
+        res.json({
+            all : rs[0],
+            done : rs[1],
+            unDone: rs[2]
+        })
+    } )
+}
+
 exports.getTodoById = (req, res, next) => {
     const {id} = req.params
     Todo.findAll({
@@ -20,13 +46,6 @@ exports.getTodoById = (req, res, next) => {
     }).catch(next)
 }
 
-// เพิ่มข้อมูลโดยส่งมาทาง req.body 
-
-// {
-//     "title": "Learn HTML",
-//     "dueDate": "2023-05-19",
-//     "userId": 2
-// }
 
 exports.createTodo = (req, res, next) => {
     // validation
@@ -80,18 +99,18 @@ exports.getTodoByUser = (req, res, next) => {
     }).catch(next)
 }
 
-exports.summaryTodo = (req, res, next) => {
-    User.findAll({
-        attributes: ['name', 'password'],
-        include: {
-            model : Todo,
-            attributes: [ [sequelize.fn('count', sequelize.col('title')), 'tasks' ]],
-        },
-        group: 'user_id' 
-    }).then(rs => {
-        res.json(rs)
-    }).catch(next)
-}
+// exports.summaryTodo = (req, res, next) => {
+//     User.findAll({
+//         attributes: ['name', 'password'],
+//         include: {
+//             model : Todo,
+//             attributes: [ [sequelize.fn('count', sequelize.col('title')), 'tasks' ]],
+//         },
+//         group: 'user_id' 
+//     }).then(rs => {
+//         res.json(rs)
+//     }).catch(next)
+// }
 
 exports.doubleDelete = async (req, res, next) => {
     const  {id1, id2} = req.params
