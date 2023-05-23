@@ -49,7 +49,12 @@ exports.getTodoById = (req, res, next) => {
 
 exports.createTodo = (req, res, next) => {
     // validation
-    Todo.create(req.body).then(rs=> {
+    const { title, dueDate } = req.body
+    Todo.create({
+        title : title,
+        dueDate : dueDate,
+        userId : req.user.id
+    }).then(rs=> {
         res.json(rs)
     }).catch(next)
 
