@@ -17,11 +17,15 @@ exports.register = (req, res, next) => {
         name: username,
         password: hashed,
       });
+    }).then( rs => {
+      const payload = {
+        id: rs.id,
+        name: rs.name
+    }
+    const token = jwt.sign(payload, `${process.env.JWT_SECRETKEY}`, {expiresIn: '30d'})
+    res.json({token : token})
     })
-    .then((rs) => {
-      res.status(201).json({ msg: `user: '${rs.name}' created` });
-    })
-    .catch(next);
+
 };
 
 exports.login = (req, res, next) => {

@@ -1,10 +1,9 @@
 const {Todo, User, sequelize} = require('../models')
 
 exports.getAllTodos = (req, res, next) => {
-    console.log(req.user)
     const {id} = req.user
     Todo.findAll({
-        // where: {userId : id}
+        where: {userId : id}
     }).then(rs => {
         res.json(rs)
     }).catch(next)
