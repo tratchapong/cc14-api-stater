@@ -38,7 +38,7 @@ exports.summaryTodo = (req, res, next) => {
 
 exports.getTodoById = (req, res, next) => {
     const {id} = req.params
-    Todo.findAll({
+    Todo.findOne({
         attributes: ['title', 'dueDate', 'status'],
         where : {id : id}
     }).then( rs => {
